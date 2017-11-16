@@ -14,7 +14,7 @@
 
 package main
 
-import "time_delta/cmd"
+import "github.com/kontza/time_delta/cmd"
 
 func main() {
 	cmd.Execute()
