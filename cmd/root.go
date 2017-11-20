@@ -27,10 +27,17 @@ var cfgFile string
 
 // RootCmd represents the base command when called without any subcommands
 var (
-	RootCmd     = &cobra.Command{
+	RootCmd = &cobra.Command{
 		Use:   "time_delta",
 		Short: "Calculates the time difference between two given hour-minute-second times.",
-		Long: `time_delta expects the time values to contain hours, minutes and seconds.
+		Long: `
+time_delta expects the time values to be as in the following format:
+	hh:mm:ss[.ms]
+	|  |  |  |
+	|  |  |  + milliseconds (optional)
+	|  |  +--- seconds
+	|  +------ minutes
+	+--------- hours
 Output is by default in seconds, but command line options exist to get the output
 in minutes, or in hours.`,
 		// Uncomment the following line if your bare application
