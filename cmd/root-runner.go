@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/romana/rlog"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -15,7 +16,7 @@ func rootRunner(cmd *cobra.Command, args []string) {
 		return
 	}
 	if len(args) < 2 {
-		logger.Fatal("Incorrect amount of arguments! There must be at least two.")
+		rlog.Critical("Incorrect amount of arguments! There must be at least two.")
 	}
 	const timeFormShort = "15:04:05"
 	const timeFormLong = "15:04:05.000"
@@ -29,13 +30,13 @@ func rootRunner(cmd *cobra.Command, args []string) {
 		}
 		timeForm := timeFormShort
 		partCount := len(pat.Split(arg, -1))
-		logger.Debugf("Part count: %d", partCount)
+		rlog.Debug("Part count:", partCount)
 		if partCount > 3 {
 			timeForm = timeFormLong
 			usedLongForm = true
 		}
 		if times[i], err = time.Parse(timeForm, arg); err != nil {
-			logger.Fatalf("Failed to parse '%s': %v", arg, err)
+			rlog.Criticalf("Failed to parse '%s': %v", arg, err)
 		}
 	}
 	var delta time.Duration

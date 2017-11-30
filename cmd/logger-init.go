@@ -2,30 +2,22 @@ package cmd
 
 import (
 	"os"
-	"time"
 
+	"github.com/romana/rlog"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 )
 
-var logger *zap.SugaredLogger
-
 func loggerInit(cmd *cobra.Command, args []string) {
-	dec := zap.NewDevelopmentEncoderConfig()
-	dec.EncodeTime = func(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
-		enc.AppendString(t.Format("2006-01-02 15:04:05.000"))
-	}
-	dec.EncodeLevel = zapcore.CapitalColorLevelEncoder
-	consoleDebugging := zapcore.Lock(os.Stdout)
-	consoleEncoder := zapcore.NewConsoleEncoder(dec)
-	loggingLevel := zap.InfoLevel
+	logLevel := "INFO"
+	hideTime := "yes"
 	if viper.GetBool("beVerbose") {
-		loggingLevel = zap.DebugLevel
+		logLevel = "DEBUG"
+		hideTime = "no"
 	}
-	core := zapcore.NewCore(consoleEncoder, consoleDebugging, zap.NewAtomicLevelAt(loggingLevel))
-	coreLogger := zap.New(core)
-	defer coreLogger.Sync()
-	logger = coreLogger.Sugar()
+	os.Setenv("RLOG_LOG_LEVEL", logLevel)
+	os.Setenv("RLOG_LOG_NOTIME", hideTime)
+	os.Setenv("RLOG_TIME_FORMAT", "2006/01/06 15:04:05.000")
+	rlog.UpdateEnv()
+	rlog.Debug("Logging level:", logLevel)
 }

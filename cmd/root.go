@@ -40,8 +40,6 @@ time_delta expects the time values to be as in the following format:
 	+--------- hours
 Output is by default in seconds, but command line options exist to get the output
 in minutes, or in hours.`,
-		// Uncomment the following line if your bare application
-		// has an action associated with it:
 		PreRun: loggerInit,
 		Run:    rootRunner,
 	}
