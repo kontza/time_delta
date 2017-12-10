@@ -23,10 +23,9 @@ import (
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
-
 // RootCmd represents the base command when called without any subcommands
 var (
+	cfgFile string
 	RootCmd = &cobra.Command{
 		Use:   "time_delta",
 		Short: "Calculates the time difference between two given hour-minute-second times.",
@@ -95,7 +94,5 @@ func initConfig() {
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
-	}
+	viper.ReadInConfig()
 }
