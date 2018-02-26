@@ -11,13 +11,6 @@ import (
 )
 
 func rootRunner(cmd *cobra.Command, args []string) {
-	if viper.GetBool("showVersion") {
-		println(fmt.Sprintf("%s v1.0.0", cmd.Use))
-		return
-	}
-	if len(args) < 2 {
-		rlog.Critical("Incorrect amount of arguments! There must be at least two.")
-	}
 	const timeFormShort = "15:04:05"
 	const timeFormLong = "15:04:05.000"
 	var times [2]time.Time

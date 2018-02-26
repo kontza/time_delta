@@ -23,10 +23,10 @@ import (
 	"github.com/spf13/viper"
 )
 
-// RootCmd represents the base command when called without any subcommands
+// rootCmd represents the base command when called without any subcommands
 var (
 	cfgFile string
-	RootCmd = &cobra.Command{
+	rootCmd = &cobra.Command{
 		Use:   "time_delta",
 		Short: "Calculates the time difference between two given hour-minute-second times.",
 		Long: `
@@ -41,13 +41,14 @@ Output is by default in seconds, but command line options exist to get the outpu
 in minutes, or in hours.`,
 		PreRun: loggerInit,
 		Run:    rootRunner,
+		Args:   cobra.MinimumNArgs(2),
 	}
 )
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	if err := RootCmd.Execute(); err != nil {
+	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
@@ -59,18 +60,16 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.time_delta.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.time_delta.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	RootCmd.PersistentFlags().BoolP("verbose", "v", false, "show verbose logging")
-	RootCmd.PersistentFlags().BoolP("version", "V", false, "show version information")
-	RootCmd.PersistentFlags().BoolP("hours", "t", false, "include fractional hours in the result output")
-	RootCmd.PersistentFlags().BoolP("minutes", "m", false, "include fractional minutes in the result output")
-	viper.BindPFlag("beVerbose", RootCmd.PersistentFlags().Lookup("verbose"))
-	viper.BindPFlag("showVersion", RootCmd.PersistentFlags().Lookup("version"))
-	viper.BindPFlag("showMinutes", RootCmd.PersistentFlags().Lookup("minutes"))
-	viper.BindPFlag("showHours", RootCmd.PersistentFlags().Lookup("hours"))
+	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "show verbose logging")
+	rootCmd.PersistentFlags().BoolP("hours", "t", false, "include fractional hours in the result output")
+	rootCmd.PersistentFlags().BoolP("minutes", "m", false, "include fractional minutes in the result output")
+	viper.BindPFlag("beVerbose", rootCmd.PersistentFlags().Lookup("verbose"))
+	viper.BindPFlag("showMinutes", rootCmd.PersistentFlags().Lookup("minutes"))
+	viper.BindPFlag("showHours", rootCmd.PersistentFlags().Lookup("hours"))
 }
 
 // initConfig reads in config file and ENV variables if set.
