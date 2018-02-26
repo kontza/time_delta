@@ -12,7 +12,7 @@ import (
 
 func rootRunner(cmd *cobra.Command, args []string) {
 	if viper.GetBool("showVersion") {
-		println("time_delta v1.0.0")
+		println(fmt.Sprintf("%s v1.0.0", cmd.Use))
 		return
 	}
 	if len(args) < 2 {
