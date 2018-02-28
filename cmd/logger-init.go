@@ -4,13 +4,13 @@ import (
 	"os"
 
 	"github.com/romana/rlog"
-	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-func loggerInit(cmd *cobra.Command, args []string) {
+func loggerInit() {
 	logLevel := "INFO"
 	hideTime := "yes"
+
 	if viper.GetBool("beVerbose") {
 		logLevel = "DEBUG"
 		hideTime = "no"

@@ -39,9 +39,9 @@ time_delta expects the time values to be as in the following format:
 	+--------- hours
 Output is by default in seconds, but command line options exist to get the output
 in minutes, or in hours.`,
-		PreRun: loggerInit,
-		Run:    rootRunner,
-		Args:   cobra.MinimumNArgs(2),
+		Run:     rootRunner,
+		Args:    cobra.MinimumNArgs(2),
+		Version: "v1.1.0",
 	}
 )
 
@@ -55,7 +55,7 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
+	cobra.OnInitialize(loggerInit, initConfig)
 
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
