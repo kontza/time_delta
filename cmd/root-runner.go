@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/romana/rlog"
@@ -18,12 +19,13 @@ func rootRunner(cmd *cobra.Command, args []string) {
 	pat := regexp.MustCompile(":|\\.")
 	usedLongForm := false
 	for i, arg := range args {
+		arg = strings.Replace(arg, ",", ".", -1)
 		if i > 1 {
 			break
 		}
 		timeForm := timeFormShort
 		partCount := len(pat.Split(arg, -1))
-		rlog.Debug("Part count:", partCount)
+		rlog.Debugf("Component count: %d, arg: %s", partCount, arg)
 		if partCount > 3 {
 			timeForm = timeFormLong
 			usedLongForm = true
