@@ -41,7 +41,7 @@ Output is by default in seconds, but command line options exist to get the outpu
 in minutes, or in hours.`,
 		Run:     rootRunner,
 		Args:    cobra.MinimumNArgs(2),
-		Version: "v1.1.0",
+		Version: "v1.2.0",
 	}
 )
 
