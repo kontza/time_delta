@@ -3,21 +3,29 @@ package cmd
 import (
 	"os"
 
-	"github.com/romana/rlog"
-	"github.com/spf13/viper"
+	"github.com/rs/zerolog"
+)
+
+var (
+	logger zerolog.Logger
 )
 
 func loggerInit() {
-	logLevel := "INFO"
-	hideTime := "yes"
+	logLevel := zerolog.InfoLevel
+	zerolog.TimeFieldFormat = " "
 
-	if viper.GetBool("beVerbose") {
-		logLevel = "DEBUG"
-		hideTime = "no"
+	verbose, _ := rootCmd.PersistentFlags().GetBool("verbose")
+	structured, _ := rootCmd.PersistentFlags().GetBool("structured")
+
+	if verbose || structured {
+		logLevel = zerolog.DebugLevel
+		zerolog.TimeFieldFormat = "2006/01/06 15:04:05.000"
 	}
-	os.Setenv("RLOG_LOG_LEVEL", logLevel)
-	os.Setenv("RLOG_LOG_NOTIME", hideTime)
-	os.Setenv("RLOG_TIME_FORMAT", "2006/01/06 15:04:05.000")
-	rlog.UpdateEnv()
-	rlog.Debug("Logging level:", logLevel)
+	zerolog.SetGlobalLevel(logLevel)
+	if structured {
+		logger = zerolog.New(os.Stderr).With().Timestamp().Logger()
+	} else {
+		logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger()
+	}
+	logger.Debug().Str("Logging level", zerolog.GlobalLevel().String()).Msg("Current")
 }

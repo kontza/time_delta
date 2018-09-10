@@ -18,9 +18,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -55,43 +53,9 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(loggerInit, initConfig)
-
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.time_delta.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
+	cobra.OnInitialize(loggerInit)
+	rootCmd.PersistentFlags().BoolP("structured", "s", false, "use structured logging")
 	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "show verbose logging")
-	rootCmd.PersistentFlags().BoolP("hours", "t", false, "include fractional hours in the result output")
-	rootCmd.PersistentFlags().BoolP("minutes", "m", false, "include fractional minutes in the result output")
-	viper.BindPFlag("beVerbose", rootCmd.PersistentFlags().Lookup("verbose"))
-	viper.BindPFlag("showMinutes", rootCmd.PersistentFlags().Lookup("minutes"))
-	viper.BindPFlag("showHours", rootCmd.PersistentFlags().Lookup("hours"))
-}
-
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err := homedir.Dir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		// Search config in home directory with name ".time_delta" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigName(".time_delta")
-	}
-
-	viper.AutomaticEnv() // read in environment variables that match
-
-	// If a config file is found, read it in.
-	viper.ReadInConfig()
+	rootCmd.PersistentFlags().BoolP("show-hours", "t", false, "include fractional hours in the result output")
+	rootCmd.PersistentFlags().BoolP("show-minutes", "m", false, "include fractional minutes in the result output")
 }

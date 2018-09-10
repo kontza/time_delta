@@ -2,36 +2,32 @@ package cmd
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 	"time"
 
-	"github.com/romana/rlog"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
+
+func printParseResult(source string, result time.Time, parser string) {
+	logger.Debug().Str("source", source).Str("result", fmt.Sprintf("%v", result)).Str("parser", parser).Msg("Parsed time value")
+}
 
 func rootRunner(cmd *cobra.Command, args []string) {
 	const timeFormShort = "15:04:05"
 	const timeFormLong = "15:04:05.000"
 	var times [2]time.Time
 	var err error
-	pat := regexp.MustCompile(":|\\.")
 	usedLongForm := false
 	for i, arg := range args {
-		arg = strings.Replace(arg, ",", ".", -1)
-		if i > 1 {
-			break
-		}
-		timeForm := timeFormShort
-		partCount := len(pat.Split(arg, -1))
-		rlog.Debugf("Component count: %d, arg: %s", partCount, arg)
-		if partCount > 3 {
-			timeForm = timeFormLong
-			usedLongForm = true
-		}
-		if times[i], err = time.Parse(timeForm, arg); err != nil {
-			rlog.Criticalf("Failed to parse '%s': %v", arg, err)
+		arg = strings.Replace(arg, ",", ".", 1)
+		if times[i], err = time.Parse(timeFormShort, arg); err != nil {
+			if times[i], err = time.Parse(timeFormLong, arg); err != nil {
+				logger.Fatal().Str("reason", fmt.Sprintf("%+v", err)).Msg("Parsing failed")
+			} else {
+				printParseResult(arg, times[i], "timeFormLong")
+			}
+		} else {
+			printParseResult(arg, times[i], "timeFormShort")
 		}
 	}
 	var delta time.Duration
@@ -52,10 +48,10 @@ func rootRunner(cmd *cobra.Command, args []string) {
 	} else {
 		fmt.Printf("%d - %d = %d\n", int(omega), int(alpha), int(delta.Seconds()))
 	}
-	if viper.GetBool("showHours") {
+	if showHours, _ := cmd.PersistentFlags().GetBool("show-hours"); showHours {
 		fmt.Printf("%.2f h\n", delta.Hours())
 	}
-	if viper.GetBool("showMinutes") {
+	if showMinutes, _ := cmd.PersistentFlags().GetBool("show-hours"); showMinutes {
 		fmt.Printf("%.2f min\n", delta.Minutes())
 	}
 }
